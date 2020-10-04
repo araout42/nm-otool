@@ -3,77 +3,97 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kicausse <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: bihattay <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/11 16:25:04 by kicausse          #+#    #+#             */
-/*   Updated: 2018/11/11 16:25:04 by kicausse         ###   ########.fr       */
+/*   Created: 2018/11/26 17:14:28 by bihattay          #+#    #+#             */
+/*   Updated: 2018/11/28 04:53:04 by bihattay         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include "libft.h"
-#include <unistd.h>
-#include <stdlib.h>
 
-static int		copy_line(char **line, char **prevbuffer)
+int		checkerror(int fd, char **line, char **buf)
 {
-	char	*tmp;
-
-	*line = ft_strsub(*prevbuffer, 0,
-		(size_t)ft_strchr(*prevbuffer, '\n') - (size_t)*prevbuffer);
-	if (*line == NULL)
-	{
-		ft_strdel(prevbuffer);
-		return (-1);
-	}
-	tmp = *prevbuffer;
-	*prevbuffer = ft_strdup(ft_strchr(*prevbuffer, '\n') + 1);
-	free(tmp);
-	return (*prevbuffer == NULL ? -1 : 1);
-}
-
-static int		copy_rest(char **line, char **prevbuffer)
-{
-	if (*prevbuffer != NULL && ft_strlen(*prevbuffer) == 0)
-	{
-		ft_strdel(prevbuffer);
+	if (fd < 0 || !line)
 		return (0);
-	}
-	*line = *prevbuffer;
-	*prevbuffer = NULL;
+	if (!(*buf = (char *)ft_strnew(BUFF_SIZE)))
+		return (0);
 	return (1);
 }
 
-static int		copy_str(char **line, char **prevbuffer)
+int		kiride(int fd, char **str, int i, char **buf)
 {
-	if (ft_strchr(*prevbuffer, '\n') != NULL)
-		return (copy_line(line, prevbuffer));
-	return (copy_rest(line, prevbuffer));
+	int		res;
+	char	*tmp;
+
+	while ((res = read(fd, *buf, BUFF_SIZE)) > 0 && ++i > -1)
+	{
+		tmp = *buf;
+		tmp[res] = '\0';
+		tmp = *str;
+		if (*str)
+			*str = ft_strjoin(*str, *buf);
+		else
+			*str = ft_strdup(*buf);
+		if (i > 0)
+			ft_strdel(&tmp);
+		if ((*str != NULL) && (ft_strchr(*str, '\n')))
+		{
+			ft_strdel(buf);
+			return (res);
+		}
+		if (*str == NULL)
+			return (-1);
+	}
+	ft_strdel(buf);
+	return (res);
 }
 
-int				get_next_line(const int fd, char **line)
+int		kirenpli(char **line, char **str, int *res)
 {
-	int				ret;
-	char			buffer[BUFF_SIZE + 1];
-	static char		*prevbuffer = NULL;
+	int		i;
+	char	*tmp;
 
-	if (fd < 0 || line == 0 || BUFF_SIZE <= 0)
+	tmp = *str;
+	i = 0;
+	if (!tmp)
 		return (-1);
-	if ((!prevbuffer || ft_strchr(prevbuffer, '\n') == NULL) && (ret = 1))
+	while (tmp[i] != '\0' && tmp[i] != '\n')
+		i++;
+	if (i == 0 || tmp[0] == '\0')
 	{
-		while (ft_strchr(prevbuffer, '\n') == NULL && ret > 0)
-		{
-			ret = read(fd, buffer, BUFF_SIZE);
-			buffer[ft_floor(0, ret)] = '\0';
-			if (ret >= 0 && !(prevbuffer =
-				ft_strjoinfree(prevbuffer, buffer)))
-				return (-1);
-		}
-		if (ret == -1)
-		{
-			ft_strdel(&prevbuffer);
+		if (!(*line = ft_strdup("")))
 			return (-1);
-		}
 	}
-	return (copy_str(line, &prevbuffer));
+	else if (!(*line = ft_strsub(tmp, 0, i)))
+		return (-1);
+	if (!ft_strlen(*str) && *res == 0)
+		return (0);
+	if (i == (int)ft_strlen(*str))
+		*str = *str + i;
+	else
+		*str = *str + i + 1;
+	return (1);
+}
+
+int		get_next_line(int fd, char **line)
+{
+	static char	*str[4867] = {NULL};
+	int			res;
+	char		*buf;
+	int			i;
+	int			ret;
+
+	i = -1;
+	ret = fd;
+	if (!(checkerror(fd, line, &buf)))
+		return (-1);
+	if ((res = kiride(fd, &str[fd], i, &buf)) == -1)
+	{
+		if (buf)
+			ft_strdel(&buf);
+		return (-1);
+	}
+	ret = kirenpli(line, &str[fd], &res);
+	return (ret);
 }

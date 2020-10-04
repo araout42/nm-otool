@@ -3,31 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strcat.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kicausse <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: bihattay <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/06 07:09:22 by kicausse          #+#    #+#             */
-/*   Updated: 2018/11/06 07:09:23 by kicausse         ###   ########.fr       */
+/*   Created: 2018/11/09 01:04:35 by bihattay          #+#    #+#             */
+/*   Updated: 2018/11/09 15:26:25 by bihattay         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-char			*ft_strcat(char *destination, const char *source)
+char	*ft_strcat(char *dest, const char *src)
 {
-	int i;
-	int offset;
+	char	*ptr;
+	char	*psrc;
 
-	if (destination == NULL || source == NULL)
-		return (NULL);
-	offset = 0;
-	while (destination[offset] != '\0')
-		offset++;
-	i = 0;
-	while (source[i] != '\0')
-	{
-		destination[offset + i] = source[i];
-		i++;
-	}
-	destination[offset + i] = '\0';
-	return (destination);
+	ptr = dest;
+	psrc = (char *)src;
+	while (*ptr)
+		ptr++;
+	while (*psrc)
+		*ptr++ = *psrc++;
+	*ptr = '\0';
+	return (dest);
 }

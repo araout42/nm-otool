@@ -6,13 +6,15 @@
 /*   By: araout <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/01 04:29:16 by araout            #+#    #+#             */
-/*   Updated: 2020/10/01 04:29:48 by araout           ###   ########.fr       */
+/*   Updated: 2020/10/04 05:52:04 by araout           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_nm.h>
 
-int main(void)
+int main(int ac, char **av)
 {
-	printf("KEK");
+(void)ac;
+(void)av;
+//	get_args(ac, av);
 }

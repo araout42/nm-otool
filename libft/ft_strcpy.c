@@ -3,27 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kicausse <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: bihattay <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/06 07:09:22 by kicausse          #+#    #+#             */
-/*   Updated: 2018/11/06 07:09:23 by kicausse         ###   ########.fr       */
+/*   Created: 2018/11/08 23:41:07 by bihattay          #+#    #+#             */
+/*   Updated: 2018/11/13 00:14:45 by bihattay         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char			*ft_strcpy(char *destination, const char *source)
+char	*ft_strcpy(char *dest, const char *src)
 {
-	unsigned int i;
+	char	*psrc;
+	int		i;
 
-	if (!destination || !source)
-		return (destination);
+	psrc = (char *)src;
 	i = 0;
-	while (source[i] != '\0')
-	{
-		destination[i] = source[i];
-		i++;
-	}
-	destination[i] = '\0';
-	return (destination);
+	while (*psrc)
+		dest[i++] = *psrc++;
+	dest[i] = '\0';
+	return (dest);
 }
